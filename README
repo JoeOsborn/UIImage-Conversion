@@ -1,30 +1,30 @@
 UIImage Conversion Sample
 -------------------------
 Paul Solt 2010
+Joe Osborn 2011
 
-Here's a sample project and code to convert between UIImage objects and RGBA8 bitmaps. The sample project is iPhone 4/iPad 3.2 compatible. 
+Here's a sample project and code to convert between UIImage objects and premultiplied-alpha BRGA8 bitmaps. The sample project is built for iOS 4.3.
 
-The ImageHelper works with iPhone 4 and the Retina display using the correct scale factor with high resolution images.
+This UIImage category works with iPhone 4 and the Retina display using the correct scale factor with high resolution images.
 
-
-Basic Example Usage showing the ability to convert back and forth between formats: 
+Usage: 
 ---------------------------------------------------------------------------------
 
-// Look at the sample project for actual usage
-
-	NSString *path = (NSString*)[[NSBundle mainBundle] pathForResource:@"Icon4" ofType:@"png"];
+	NSString *path = [[NSBundle mainBundle] pathForResource:@"Icon4" ofType:@"png"];
 	UIImage *image = [UIImage imageWithContentsOfFile:path]; 
-	int width = image.size.width;
-	int height = image.size.height;
+	CGSize size = image.size;
 	
-	// Create a bitmap
-	unsigned char *bitmap = [ImageHelper convertUIImageToBitmapRGBA8:image];
+	// Create a bitmap. The caller is responsible for releasing it.
+	unsigned char *bitmap = [image newBRGA8Bitmap];
+	
+	// ... Modify the bitmap ...
 	
 	// Create a UIImage using the bitmap
-	UIImage *imageCopy = [ImageHelper convertBitmapRGBA8ToUIImage:bitmap withWidth:width withHeight:height];
-	
-	// Display the image copy on the GUI
-	UIImageView *imageView = [[UIImageView alloc] initWithImage:imageCopy];
+	UIImage *modifiedImage = [UIImage imageWithSize:size
+	                                fromBRGA8Bitmap:bitmap];
 
-	// Cleanup
+	// Clean up the bitmap
 	free(bitmap);
+	
+	self.imageView.image = modifiedImage;
+
