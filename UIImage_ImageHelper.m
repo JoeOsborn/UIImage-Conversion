@@ -26,6 +26,10 @@
 
 #import "UIImage_ImageHelper.h"
 
+void ProviderReleaseMem(void*, const void*, size_t);
+void ProviderReleaseMem(void*info, const void*mem, size_t size) {
+	free((void *)mem);
+}
 
 @implementation UIImage(ImageHelper)
 
@@ -54,7 +58,7 @@
 	}
 	
 	// Allocate memory for image data
-	bitmapData = (uint8_t *)malloc(sizeof(uint8_t)*bufferLength);
+	bitmapData = (uint8_t *)calloc(bufferLength, sizeof(uint8_t));
 	
 	if(!bitmapData) {
 		NSLog(@"Error allocating memory for bitmap\n");
@@ -90,13 +94,13 @@
 	
 	// Draw image into the context to get the raw image data
 	CGContextDrawImage(context, rect, image);
-
 	CGContextRelease(context);
 	
 	return bitmapData;	
 }
 
 + (UIImage *)imageWithSize:(CGSize)size
+										 scale:(CGFloat)scale
 					 fromBRGA8Bitmap:(unsigned char *)buffer {
 	size_t width = size.width;
 	size_t height = size.height;
@@ -106,11 +110,11 @@
 	size_t bytesPerPixel = bitsPerPixel / bitsPerComponent;
 	
 	size_t bufferLength = width * height * bytesPerPixel;
-
+	
 	size_t bytesPerRow = 4 * width;
-
-	//caller still owns the buffer
-	CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, buffer, bufferLength, NULL);
+	
+	//caller no longer owns the buffer
+	CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, buffer, bufferLength, ProviderReleaseMem);
 	
 	CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceRGB();
 	if(colorSpaceRef == NULL) {
@@ -134,14 +138,14 @@
 																	NULL,		  // decode
 																	YES,			// should interpolate
 																	renderingIntent);
-	float scale = [[UIScreen mainScreen] scale];
+	
 	UIImage *ret = [UIImage imageWithCGImage:iref 
 																		 scale:scale 
 															 orientation:UIImageOrientationUp];
 	CGImageRelease(iref);
 	CGDataProviderRelease(provider);
 	CGColorSpaceRelease(colorSpaceRef);
-	//caller _still_ owns the buffer, this function does not take ownership of it!
+	//caller must not free the buffer! it's in Quartz's hands now.
 	return ret;
 }
 

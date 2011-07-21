@@ -25,13 +25,11 @@
 	unsigned char *bitmap = [image newBRGA8Bitmap];
 	
 	// Create a UIImage using the bitmap
-	UIImage *imageCopy = [UIImage imageWithSize:CGSizeMake(width, height) fromBRGA8Bitmap:bitmap];
+	UIImage *imageCopy = [UIImage imageWithSize:CGSizeMake(width, height) 
+																				scale:image.scale
+															fromBRGA8Bitmap:bitmap];
 	
-	// Cleanup
-	if(bitmap) {
-		free(bitmap);	
-		bitmap = NULL;
-	}
+	//be sure NOT to free the bitmap -- it belongs to imageCopy.
 	
 	self.imageView.image = imageCopy;
 	

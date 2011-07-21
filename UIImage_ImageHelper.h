@@ -45,12 +45,15 @@
  */
 - (unsigned char *)newBRGA8Bitmap;
 
-/** Converts a BRGA8 bitmap to a UIImage. 
+/** Converts a BRGA8 bitmap to a UIImage. Transfers ownership of the bitmap to the newly allocated object. This is to avoid cases where client code naively manipulates or frees the buffer immediately after calling this method; CGDataProvider is used internally and Quartz is much cleverer with memory than you or I.
  @param size - the size in pixels
- @param buffer - the BRGA8 unsigned char * bitmap
+ @param scale - the image scale
+ @param buffer - the BRGA8 bitmap, consumed by this method. do not
+ attempt to modify or use buffer in any way after calling this method.
  @return an image of the given size composed of the bytes in buffer
  */
 + (UIImage *)imageWithSize:(CGSize)size
+										 scale:(CGFloat)scale
 					 fromBRGA8Bitmap:(unsigned char *)buffer;
 
 @end
