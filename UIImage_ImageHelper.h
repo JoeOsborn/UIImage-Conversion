@@ -2,6 +2,7 @@
  * The MIT License
  *
  * Copyright (c) 2011 Paul Solt, PaulSolt@gmail.com
+ * Modifications Copyright (c) 2011 Joe Osborn, josborn@universalhappymaker.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,34 +24,34 @@
  *
  */
 
+/*
+ * Changes from origin:
+ * * ImageHelper is now a category on UIImage with convention-following method names
+ * * We now convert to and from BRGA8 for better drawing performance
+ * * To simplify malloc/free responsibilities, the bitmap context is now created within 
+ *   the to-RGBA8 (now BRGA8) conversion method. Before, its bitmap could leak if the 
+ *   context creation method were used improperly.
+ * * An unnecessary memory copy was removed.
+ * * An unnecessary context creation and image draw were removed.
+ */
+
 #import <Foundation/Foundation.h>
 
 
-@interface ImageHelper : NSObject {
-	
-}
+@interface UIImage(ImageHelper)
 
-/** Converts a UIImage to RGBA8 bitmap.
- @param image - a UIImage to be converted
- @return a RGBA8 bitmap, or NULL if any memory allocation issues. Cleanup memory with free() when done.
+/** Converts a UIImage to BRGA8 bitmap.
+ @return a BRGA8 bitmap owned by the caller of length image.size.width*image.size.height, or NULL if memory could not be allocated
  */
-+ (unsigned char *) convertUIImageToBitmapRGBA8:(UIImage *)image;
+- (unsigned char *)newBRGA8Bitmap;
 
-/** A helper routine used to convert a RGBA8 to UIImage
- @return a new context that is owned by the caller
+/** Converts a BRGA8 bitmap to a UIImage. 
+ @param size - the size in pixels
+ @param buffer - the BRGA8 unsigned char * bitmap
+ @return an image of the given size composed of the bytes in buffer
  */
-+ (CGContextRef) newBitmapRGBA8ContextFromImage:(CGImageRef)image;
-
-
-/** Converts a RGBA8 bitmap to a UIImage. 
- @param buffer - the RGBA8 unsigned char * bitmap
- @param width - the number of pixels wide
- @param height - the number of pixels tall
- @return a UIImage that is autoreleased or nil if memory allocation issues
- */
-+ (UIImage *) convertBitmapRGBA8ToUIImage:(unsigned char *)buffer 
-								withWidth:(int)width
-							   withHeight:(int)height;
++ (UIImage *)imageWithSize:(CGSize)size
+					 fromBRGA8Bitmap:(unsigned char *)buffer;
 
 @end
 

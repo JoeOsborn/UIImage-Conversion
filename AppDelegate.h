@@ -1,5 +1,5 @@
 //
-//  AppDelegate_iPad.h
+//  AppDelegate.h
 //  ImageConversion
 //
 //  Created by Paul Solt on 9/22/10.
@@ -8,11 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AppDelegate_iPad : NSObject <UIApplicationDelegate> {
-    UIWindow *window;
-}
+@interface AppDelegate : NSObject <UIApplicationDelegate>
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
+@property (nonatomic, retain) IBOutlet UIImageView *imageView;
 
 @end
 
