@@ -27,9 +27,9 @@
 /*
  * Changes from origin:
  * * ImageHelper is now a category on UIImage with convention-following method names
- * * We now convert to and from BRGA8 for better drawing performance
+ * * We now convert to and from BGRA8 for better drawing performance
  * * To simplify malloc/free responsibilities, the bitmap context is now created within 
- *   the to-RGBA8 (now BRGA8) conversion method. Before, its bitmap could leak if the 
+ *   the to-RGBA8 (now BGRA8) conversion method. Before, its bitmap could leak if the 
  *   context creation method were used improperly.
  * * An unnecessary memory copy was removed.
  * * An unnecessary context creation and image draw were removed.
@@ -40,21 +40,21 @@
 
 @interface UIImage(ImageHelper)
 
-/** Converts a UIImage to BRGA8 bitmap.
- @return a BRGA8 bitmap owned by the caller of length image.size.width*image.size.height, or NULL if memory could not be allocated
+/** Converts a UIImage to BGRA8 bitmap.
+ @return a BGRA8 bitmap owned by the caller of length image.size.width*image.size.height, or NULL if memory could not be allocated
  */
-- (unsigned char *)newBRGA8Bitmap;
+- (unsigned char *)newBGRA8Bitmap;
 
-/** Converts a BRGA8 bitmap to a UIImage. Transfers ownership of the bitmap to the newly allocated object. This is to avoid cases where client code naively manipulates or frees the buffer immediately after calling this method; CGDataProvider is used internally and Quartz is much cleverer with memory than you or I.
+/** Converts a BGRA8 bitmap to a UIImage. Transfers ownership of the bitmap to the newly allocated object. This is to avoid cases where client code naively manipulates or frees the buffer immediately after calling this method; CGDataProvider is used internally and Quartz is much cleverer with memory than you or I.
  @param size - the size in pixels
  @param scale - the image scale
- @param buffer - the BRGA8 bitmap, consumed by this method. do not
+ @param buffer - the BGRA8 bitmap, consumed by this method. do not
  attempt to modify or use buffer in any way after calling this method.
  @return an image of the given size composed of the bytes in buffer
  */
 + (UIImage *)imageWithSize:(CGSize)size
 										 scale:(CGFloat)scale
-					 fromBRGA8Bitmap:(unsigned char *)buffer;
+					 fromBGRA8Bitmap:(unsigned char *)buffer;
 
 @end
 

@@ -33,8 +33,7 @@ void ProviderReleaseMem(void*info, const void*mem, size_t size) {
 
 @implementation UIImage(ImageHelper)
 
-
-- (unsigned char *)newBRGA8Bitmap {
+- (unsigned char *)newBGRA8Bitmap {
 	CGImageRef image = self.CGImage;
 	CGContextRef context = NULL;
 	CGColorSpaceRef colorSpace;
@@ -101,7 +100,7 @@ void ProviderReleaseMem(void*info, const void*mem, size_t size) {
 
 + (UIImage *)imageWithSize:(CGSize)size
 										 scale:(CGFloat)scale
-					 fromBRGA8Bitmap:(unsigned char *)buffer {
+					 fromBGRA8Bitmap:(unsigned char *)buffer {
 	size_t width = size.width;
 	size_t height = size.height;
 	
@@ -148,5 +147,6 @@ void ProviderReleaseMem(void*info, const void*mem, size_t size) {
 	//caller must not free the buffer! it's in Quartz's hands now.
 	return ret;
 }
+
 
 @end

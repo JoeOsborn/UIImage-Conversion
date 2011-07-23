@@ -22,12 +22,12 @@
 	int height = image.size.height;
 	
 	// Create a bitmap
-	unsigned char *bitmap = [image newBRGA8Bitmap];
+	unsigned char *bitmap = [image newBGRA8Bitmap];
 	
 	// Create a UIImage using the bitmap
 	UIImage *imageCopy = [UIImage imageWithSize:CGSizeMake(width, height) 
 																				scale:image.scale
-															fromBRGA8Bitmap:bitmap];
+															fromBGRA8Bitmap:bitmap];
 	
 	//be sure NOT to free the bitmap -- it belongs to imageCopy.
 	
